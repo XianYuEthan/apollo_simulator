@@ -211,13 +211,13 @@ Status LatController::Init(std::shared_ptr<DependencyInjector> injector,
    (-1.0 * (l_f^2 * c_f + l_r^2 * c_r) / i_z) / v;]
   */
   matrix_a_(0, 1) = 1;
-  matrix_a_(1, 2) = (cf_ + cr_) / mass;
+  matrix_a_(1, 2) = (cf_ + cr_) / mass_;
   matrix_a_(2, 3) = 1;
   matrix_a_(3, 2) = ((lr_ * cr_ - lf_ * cf_) / iz_) / v;
 
   matrix_a_coeff_ = Matrix::Zero(matrix_size, matrix_size);
-  matrix_a_coeff_(1, 1) = (-(cf_ + cr_) / mass) / v;
-  matrix_a_coeff_(1, 3) = (cf_ + cr_) / mass;
+  matrix_a_coeff_(1, 1) = (-(cf_ + cr_) / mass_) / v;
+  matrix_a_coeff_(1, 3) = (cf_ + cr_) / mass_;
   matrix_a_coeff_(3, 1) = ((lr_ * cr_ - lf_ * cf_) / iz_) / v;
   matrix_a_coeff_(3, 3) = (-1.0  (lf_^2 * cf_ + lr_^2 * cr_) / iz_) / v;
 
@@ -743,7 +743,7 @@ void LatController::UpdateMatrixCompound() {
 
 double LatController::ComputeFeedForward(double ref_curvature) const {
   const double kv =
-      l_r*mass/(2*cf_*(lf_+lr_))-lf_*mass/(2*cr_*(lf_+lr_))
+      l_r*mass_/(2*cf_*(lf_+lr_))-lf_*mass_/(2*cr_*(lf_+lr_))
 
   // Calculate the feedforward term of the lateral controller; then change it
   // from rad to %
@@ -758,7 +758,7 @@ double LatController::ComputeFeedForward(double ref_curvature) const {
         (wheelbase_*ref_curvature+ kv*v^2*ref_curvature -
          matrix_k_(0,2)*
              (lr_/2/cf_ -
-              lr_/2/cr_*mass*v^2*ref_curvature/wheelbase_)) *
+              lr_/2/cr_*mass_*v^2*ref_curvature/wheelbase_)) *
         180 / M_PI * steer_ratio_ / steer_single_direction_max_degree_ * 100;
   }
 
